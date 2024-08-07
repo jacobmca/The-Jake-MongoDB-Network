@@ -1,0 +1,1 @@
+const { Email, Friends, Thoughts, Username } = require('../models');
