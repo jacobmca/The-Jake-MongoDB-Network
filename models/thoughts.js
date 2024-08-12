@@ -3,7 +3,7 @@ const moment = require('moment');
 
 // Schema for Reaction subdocument
 const reactionSchema = new Schema({
-    reactionID: {
+    reactionId: {
         type: Schema.Types.ObjectId,
         default: () => new Types.ObjectId(),
     },
@@ -29,7 +29,7 @@ const reactionSchema = new Schema({
 });
 
 // Schema for Thought model
-const thoughtsSchema = new Schema({
+const thoughtSchema = new Schema({
     thoughtText: {
         type: String,
         required: true,
@@ -49,7 +49,7 @@ const thoughtsSchema = new Schema({
 },
 {
     toJSON: {
-        virtual: true,
+        virtuals: true,
         getters: true,
     },
     id: false,
@@ -57,11 +57,11 @@ const thoughtsSchema = new Schema({
 
 // Virtual for length of thought reactions
 
-userSchema.virtual('reactionCount').get(function () {
+thoughtSchema.virtual('reactionCount').get(function () {
     return this.reactions.length;
 });
 
 // Initialize the Thoughts Model
-const Thoughts = model('thoughts', thoughtsSchema);
+const Thought = model('thoughts', thoughtSchema);
 
-module.exports = Thoughts;
+module.exports = Thought;
