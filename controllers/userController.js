@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { Thought, User } = require('../models');
 
 module.exports = {
@@ -14,6 +15,10 @@ module.exports = {
     // Get a single user
     async getSingleUser(req, res) {
       try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+          return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
         const user = await User.findOne({ _id: req.params.userId })
             .populate('thoughts')
             .populate('friends');
@@ -24,6 +29,7 @@ module.exports = {
   
         res.json(user);
       } catch (err) {
+        console.log(err);
         res.status(500).json(err);
       }
     },
@@ -60,7 +66,7 @@ module.exports = {
     // Delete a user by ID
     async deleteUser(req, res) {
         try {
-            const user = await User.findOneAndRemove({ _id: req.params.userId });
+            const user = await User.findByIdAndDelete({ _id: req.params.userId });
 
             if (!user) {
                 return res.status(404).json({ message: 'No user found with that ID!'});
@@ -71,7 +77,47 @@ module.exports = {
         
             res.json({ message: "User and associated thoughts deleted!"});
             } catch (err) {
+            console.log(err);
             res.status(500).json(err);
             }
     },
+
+      // Add Friend
+      async addFriend(req, res) {
+        try {
+          const user = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $addToSet: { friends: req.params.friendId } },
+            { new: true }
+          );
+      
+          if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+      
+          res.json(user);
+        } catch (err) {
+          res.status(500).json(err);
+        }
+      },
+
+      // Remove Friend
+      async removeFriend(req, res) {
+        try {
+          const user = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $pull: { friends: req.params.friendId } },
+            { new: true }
+          );
+      
+          if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+      
+          res.json(user);
+        } catch (err) {
+          res.status(500).json(err);
+        }
+    }
+    
   };

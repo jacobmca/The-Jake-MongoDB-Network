@@ -4,7 +4,7 @@ module.exports = {
     // Get all thoughts
     async getThoughts(req, res) {
       try {
-        const thought = await Thought.find();
+        const thoughts = await Thought.find();
         res.json(thoughts);
       } catch (err) {
         res.status(500).json(err);
@@ -39,7 +39,7 @@ module.exports = {
         if (!user) {
           return res
             .status(404)
-            .json({ message: 'Thought created, but no posts with this ID' });
+            .json({ message: 'Thought created, but no user with this ID' });
         }
   
         res.json({ message: 'Thought created!' });
@@ -87,7 +87,7 @@ module.exports = {
                 return res.status(404).json({ message: 'Thought deleted, but no user with this ID' });
             }
         
-            res.status(200).json("ID deleted!");
+            res.status(200).json("Thought successfully deleted!");
             } catch (err) {
             res.status(500).json(err);
             }
@@ -108,6 +108,7 @@ module.exports = {
     
         res.json(thought);
       } catch (err) {
+        console.log(err);
         res.status(500).json(err);
       }
     },
@@ -127,6 +128,7 @@ module.exports = {
     
         res.json(thought);
       } catch (err) {
+        console.log(err);
         res.status(500).json(err);
       }
     }
